@@ -1,4 +1,3 @@
-
 FROM node:12-alpine as build
 
 RUN apk update && \
@@ -22,11 +21,8 @@ ARG REACT_APP_SERVER_ADDR
 RUN yarn build
 
 # next stage: prepare production environment
-FROM nginx:alpine
 ENV NODE_ENV=development
 
-RUN mkdir -p /app/current && \
-  chown -R nginx:nginx /app
+FROM bitnami/nginx:1.12.0-r0
 
-COPY --from=build --chown=nginx:nginx /app/build /app/current
-COPY --from=build --chown=nginx:nginx /app/nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/build /app
